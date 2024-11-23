@@ -1,8 +1,8 @@
+import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
   View,
-  Button,
   TextInput,
   StyleSheet,
   Text,
@@ -31,45 +31,6 @@ const Login = () => {
     }
   };
 
-  // Create a new user
-  const onSignUpPress = async () => {
-    setLoading(true);
-    console.log('Email -> ', email);
-    console.log('Password -> ', password);
-
-    const {
-      data: { session },
-      error,
-    } = await supabaseConnector.client.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          first_name: 'Mohamed',
-          last_name: 'Keita',
-          dob: '01/03/1993',
-          personal_num: '415-640-0262',
-          emergency_num: '510-282-4142',
-          address: '444 Chollo Ct',
-          languages: 'Bambara, French, and English',
-          team: 'Community Worker',
-          center: 'Kati CSCOM',
-          organization: 'CSCOM',
-          role: 'Care Provider',
-          photo: 'Smiling',
-        },
-      },
-    });
-
-    if (error) {
-      Alert.alert(error.message);
-    } else if (!session) {
-      Alert.alert('Please check your inbox for email verification!');
-    }
-
-    setLoading(false);
-  };
-
   return (
     <View style={styles.container}>
       {loading && (
@@ -87,18 +48,27 @@ const Login = () => {
           <Text style={{ color: '#fff', fontSize: 20 }}>Loading...</Text>
         </View>
       )}
-
-      <Text style={styles.header}>Mali Health</Text>
-
+      <View style={styles.header}>
+        <Text style={{ fontSize: 42, color: 'green' }}>M</Text>
+        <Text style={{ fontSize: 42, color: 'yellow' }}>a</Text>
+        <Text style={{ fontSize: 42, color: 'red' }}>l</Text>
+        <Text style={{ fontSize: 42, color: 'red' }}>i</Text>
+        <Text style={{ fontSize: 42 }}> </Text>
+        <Text style={{ fontSize: 42, color: 'green' }}>He</Text>
+        <Text style={{ fontSize: 42, color: 'yellow' }}>al</Text>
+        <Text style={{ fontSize: 42, color: 'red' }}>th</Text>
+      </View>
       <TextInput
         autoCapitalize="none"
         placeholder="john@doe.com"
+        placeholderTextColor="black"
         value={email}
         onChangeText={setEmail}
         style={styles.inputField}
       />
       <TextInput
         placeholder="password"
+        placeholderTextColor="black"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -108,7 +78,11 @@ const Login = () => {
       <TouchableOpacity onPress={onSignInPress} style={styles.button}>
         <Text style={{ color: '#fff' }}>Sign in</Text>
       </TouchableOpacity>
-      <Button onPress={onSignUpPress} title="Create Account" color={'#fff'}></Button>
+      <TouchableOpacity>
+        <Link href="/index_">
+          <Text style={{ textAlign: 'center', color: 'red' }}> Create an account </Text>
+        </Link>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -121,25 +95,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#151515',
   },
   header: {
-    fontSize: 30,
+    fontFamily: 'Cochin',
+    fontWeight: 'bold',
     textAlign: 'center',
-    margin: 50,
-    color: '#fff',
+    margin: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   inputField: {
     marginVertical: 4,
     height: 50,
     borderWidth: 1,
-    borderColor: '#A700FF',
+    borderColor: 'green',
     borderRadius: 4,
     padding: 10,
-    color: '#fff',
-    backgroundColor: '#363636',
+    color: 'yellow',
+    backgroundColor: 'grey',
   },
   button: {
     marginVertical: 15,
     alignItems: 'center',
-    backgroundColor: '#A700FF',
+    backgroundColor: 'green',
     padding: 12,
     borderRadius: 4,
   },

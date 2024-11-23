@@ -19,12 +19,12 @@ const Layout = () => {
         <Stack.Screen
           name="index"
           options={{
-            title: 'Power Todos',
+            title: 'Dashboard',
             headerStyle: { backgroundColor: '#151515' },
-            headerTitleStyle: { color: '#fff' },
+            headerTitleStyle: { color: 'green' },
             headerLeft: () => (
               <TouchableOpacity onPress={onSignOut}>
-                <Ionicons name="log-out-outline" size={24} color="white" />
+                <Ionicons name="log-out-outline" size={24} color="yellow" />
               </TouchableOpacity>
             ),
           }}
