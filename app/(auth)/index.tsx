@@ -1,122 +1,155 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
+import { useNavigation, Link } from 'expo-router';
+import React, { useState, useEffect } from 'react';
 import {
   View,
-  TextInput,
+  Button,
+  StyleSheet,
   FlatList,
   Text,
-  ListRenderItem,
-  StyleSheet,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 
-import AppleStyleSwipeableRow from '~/components/SwipeableRow';
-import { TODOS_TABLE, Todo } from '~/powersync/AppSchema';
-import { useSystem } from '~/powersync/PowerSync';
-import { uuid } from '~/powersync/uuid';
+import OrganizationList from './components/OrganizationList';
 
-const Page = () => {
-  const [task, setTask] = useState('');
-  const { supabaseConnector, db } = useSystem();
-  const [todos, setTodos] = useState<Todo[]>([]);
+import { useSystem } from '~/powersync/PowerSync';
+
+const Dashboard = () => {
+  const [name, setName] = useState('');
+  const [organization, setOrganization] = useState([{}]);
+  const [selectedScreen, setSelectedScreen] = useState('show');
+
+  const [center, setCenter] = useState([{}]);
+  const [isVisible, setIsVisible] = useState(true);
+  const { supabaseConnector } = useSystem();
+  const navigation = useNavigation();
 
   useEffect(() => {
-    loadTodos();
-  }, []);
+    getUserName();
+    showOrganizations();
+    showCenters();
+  });
+  const getUserName = async () => {
+    const { data, error } = await supabaseConnector.client.auth.getSession();
+    if (error) {
+      throw error;
+    }
 
-  const loadTodos = async () => {
-    const result = await db.selectFrom(TODOS_TABLE).selectAll().execute();
-    setTodos(result);
+    if (Object.keys(data.session.user.user_metadata.first_name).length > 0) {
+      setName(data.session.user.user_metadata.first_name);
+    } else {
+      setName('');
+    }
   };
 
-  const addTodo = async () => {
-    const { userID } = await supabaseConnector.fetchCredentials();
-    const todoId = uuid();
-    console.log('Inside the addTodo function!');
-    await db
-      .insertInto(TODOS_TABLE)
-      .values({ id: todoId, task, user_id: userID, is_complete: 0 })
-      .execute();
-
-    setTask('');
-    loadTodos();
+  const handleScreenChange = (screen) => {
+    setSelectedScreen(screen);
   };
 
-  const updateTodo = async (todo: Todo) => {
-    await db
-      .updateTable(TODOS_TABLE)
-      .where('id', '=', todo.id)
-      .set({ is_complete: todo.is_complete === 1 ? 0 : 1 })
-      .execute();
-    loadTodos();
+  const addOrganization = async () => {
+    // eslint-disable-next-line no-unused-expressions
   };
-
-  const deleteTodo = async (todo: Todo) => {
-    const result = await db.deleteFrom(TODOS_TABLE).where('id', '=', todo.id).execute();
-    loadTodos();
+  const showOrganizations = async () => {
+    const { data } = await supabaseConnector.getOrganizations();
+    setOrganization(data);
   };
-
-  const renderRow: ListRenderItem<any> = ({ item }) => {
-    return (
-      <AppleStyleSwipeableRow
-        onDelete={() => deleteTodo(item)}
-        onToggle={() => updateTodo(item)}
-        todo={item}>
-        <View style={{ padding: 12, flexDirection: 'row', gap: 10, height: 44 }}>
-          <Text style={{ flex: 1 }}>{item.task}</Text>
-          {item.is_complete === 1 && (
-            <Ionicons name="checkmark-done-outline" size={24} color="#00d5ff" />
-          )}
-        </View>
-      </AppleStyleSwipeableRow>
-    );
+  const addCenter = async () => {
+    // eslint-disable-next-line no-unused-expressions
   };
-
+  const showCenters = async () => {
+    // eslint-disable-next-line no-unused-expressions
+    const { data } = await supabaseConnector.getCenters();
+    setCenter(data);
+  };
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.inputRow}>
-        <TextInput
-          placeholder="Add new task"
-          style={styles.input}
-          value={task}
-          onChangeText={setTask}
-        />
-        <TouchableOpacity onPress={addTodo} disabled={task === ''}>
-          <Ionicons name="add-outline" size={24} color="#A700FF" />
-        </TouchableOpacity>
+    <View>
+      <Text style={styles.container}>
+        <Text> Hello Admin,</Text>
+        <Text style={styles.content}> {name} </Text>
+      </Text>
+      <View>
+        <Pressable style={styles.button}>
+          <Link
+            push href={{
+              pathname: '/components/OrganizationList',
+              params: organization[0],
+            }}>
+            <Text style={styles.buttonText}>Show Organizations</Text>
+          </Link>
+        </Pressable>
       </View>
 
-      {todos && (
-        <FlatList
-          data={todos}
-          renderItem={renderRow}
-          ItemSeparatorComponent={() => (
-            <View
-              style={{ height: StyleSheet.hairlineWidth, width: '100%', backgroundColor: 'gray' }}
-            />
-          )}
-        />
-      )}
+      <View>
+        <Pressable style={styles.button}>
+          <Link
+            push href={{
+              pathname: '/components/CenterList',
+              params: center[0],
+            }}>
+            <Text style={styles.buttonText}>Show Centers</Text>
+          </Link>
+        </Pressable>
+      </View>
+
+      <View>
+        <Pressable style={styles.button}>
+          <Link
+            push href={{
+              pathname: '/components/AddOrganization',
+              params: organization[0],
+            }}>
+            <Text style={styles.buttonText}>Add an Organization</Text>
+          </Link>
+        </Pressable>
+      </View>
+
+      <View>
+        <Pressable style={styles.button}>
+          <Link
+            push href={{
+              pathname: '/components/AddCenter',
+              params: center[0],
+            }}>
+            <Text style={styles.buttonText}>Add a Center</Text>
+          </Link>
+        </Pressable>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  inputRow: {
-    flexDirection: 'row',
-    gap: 10,
-    backgroundColor: '#151515',
-    padding: 6,
-    alignItems: 'center',
+  container: {
+    padding: 20,
+    margin: 5,
   },
-  input: {
-    flex: 1,
-    backgroundColor: '#363636',
-    color: '#fff',
-    padding: 8,
+  button: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 5,
+    marginVertical: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  card: {
+    padding: 10,
     borderWidth: 1,
-    borderColor: '#A700FF',
-    borderRadius: 4,
+    borderColor: '#ccc',
+    marginBottom: 10,
+  },
+  cardTitle: {
+    fontWeight: 'bold',
+  },
+  cardDescription: {
+    marginBottom: 5,
+  },
+  content: {
+    fontWeight: 'bold',
+    color: 'red',
   },
 });
-export default Page;
+
+export default Dashboard;

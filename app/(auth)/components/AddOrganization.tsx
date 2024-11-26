@@ -13,7 +13,7 @@ import {
 
 import { useSystem } from '~/powersync/PowerSync';
 
-const index_ = () => {
+const AddOrganization = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -264,4 +264,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default index_;
+export default AddOrganization;

@@ -29,6 +29,34 @@ const Layout = () => {
             ),
           }}
         />
+        <Stack.Screen
+          name="components/OrganizationList"
+          options={{
+            title: 'Organization',
+            headerTitleStyle: { color: 'green' },
+          }}
+        />
+        <Stack.Screen
+          name="components/CenterList"
+          options={{
+            title: 'Center',
+            headerTitleStyle: { color: 'green' },
+          }}
+        />
+        <Stack.Screen
+          name="components/AddOrganization"
+          options={{
+            title: 'Add an organization',
+            headerTitleStyle: { color: 'green' },
+          }}
+        />
+         <Stack.Screen
+          name="components/AddCenter"
+          options={{
+            title: 'Add a center',
+            headerTitleStyle: { color: 'green' },
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );

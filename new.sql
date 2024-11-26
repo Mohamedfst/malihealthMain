@@ -47,7 +47,7 @@ returns trigger as $$
 begin
   insert into public.users (id, email, first_name, last_name, 
   dob, personal_num, emergency_num, address, med_license, nat_license, languages, team, center, organization, role, photo)
-  values (new.id, new.email ,
+  values (new.id, new.email,
   new.raw_user_meta_data->>'first_name', 
   new.raw_user_meta_data->>'last_name', 
   new.raw_user_meta_data->>'dob', 
