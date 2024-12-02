@@ -1,5 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Stack } from 'expo-router';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { Stack, Tabs } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -15,49 +17,47 @@ const Layout = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack>
-        <Stack.Screen
+      <Tabs screenOptions={{ tabBarActiveTintColor: 'blue' }}>
+        <Tabs.Screen
           name="index"
           options={{
-            title: 'Dashboard',
-            headerStyle: { backgroundColor: '#151515' },
-            headerTitleStyle: { color: 'green' },
-            headerLeft: () => (
-              <TouchableOpacity onPress={onSignOut}>
-                <Ionicons name="log-out-outline" size={24} color="yellow" />
-              </TouchableOpacity>
-            ),
+            title: 'Home',
+            tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
           }}
         />
-        <Stack.Screen
+        <Tabs.Screen
           name="components/OrganizationList"
           options={{
             title: 'Organization',
-            headerTitleStyle: { color: 'green' },
+            tabBarIcon: ({ color }) => <FontAwesome size={28} name="hospital-o" color={color} />,
           }}
         />
-        <Stack.Screen
+        <Tabs.Screen
           name="components/CenterList"
           options={{
             title: 'Center',
-            headerTitleStyle: { color: 'green' },
+            tabBarIcon: ({ color }) => <FontAwesome size={28} name="hospital-o" color={color} />,
           }}
         />
-        <Stack.Screen
+        <Tabs.Screen
           name="components/AddOrganization"
           options={{
             title: 'Add an organization',
-            headerTitleStyle: { color: 'green' },
+            tabBarIcon: ({ color }) => (
+              <FontAwesome6 size={28} name="hospital-user" color={color} />
+            ),
           }}
         />
-         <Stack.Screen
+        <Tabs.Screen
           name="components/AddCenter"
           options={{
             title: 'Add a center',
-            headerTitleStyle: { color: 'green' },
+            tabBarIcon: ({ color }) => (
+              <FontAwesome6 size={28} name="hospital-user" color={color} />
+            ),
           }}
         />
-      </Stack>
+      </Tabs>
     </GestureHandlerRootView>
   );
 };

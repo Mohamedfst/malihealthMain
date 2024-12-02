@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -14,61 +14,38 @@ import {
 import { useSystem } from '~/powersync/PowerSync';
 
 const AddOrganization = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [dob, setDob] = useState('');
-  const [personalNum, setPersonalNum] = useState('');
-  const [emergencyNum, setEmergencyNum] = useState('');
+  const [name, setName] = useState('');
   const [address, setAddress] = useState('');
-  const [medLicense, setMedLicense] = useState('');
-  const [natLicense, setNatLicense] = useState('');
-  const [languages, setLanguages] = useState('');
-  const [team, setTeam] = useState('');
-  const [center, setCenter] = useState('');
-  const [organization, setOrganization] = useState('');
-  const [role, setRole] = useState('');
+  const [email, setEmail] = useState('');
+  const [number, setNumber] = useState('');
+  const [type, setType] = useState('');
 
   const [loading, setLoading] = useState(false);
   const { supabaseConnector } = useSystem();
 
-  //Create a new user
+  const router = useRouter();
+
+  //Create a new organization
   const onSignUpPress = async () => {
     setLoading(true);
-
-    const {
-      data: { session },
-      error,
-    } = await supabaseConnector.client.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-          dob,
-          personal_num: personalNum,
-          emergency_num: emergencyNum,
+    const { data, error } = await supabaseConnector.client
+      .from('organizations')
+      .insert([
+        {
+          name,
           address,
-          med_license: medLicense,
-          nat_license: natLicense,
-          languages,
-          team,
-          center,
-          organization,
-          role,
+          email,
+          number,
+          type,
         },
-      },
-    });
-
+      ])
+      .select();
     if (error) {
+      console.log('error', error);
       Alert.alert(error.message);
-    } else if (!session) {
-      Alert.alert('Please check your inbox for email verification!');
     }
-
     setLoading(false);
+    router.push('/(auth)');
   };
 
   return (
@@ -97,6 +74,14 @@ const AddOrganization = () => {
         </View>
         <TextInput
           autoCapitalize="none"
+          placeholder="Organization Name"
+          placeholderTextColor="black"
+          value={name}
+          onChangeText={setName}
+          style={styles.inputField}
+        />
+        <TextInput
+          autoCapitalize="none"
           placeholder="john@doe.com"
           placeholderTextColor="black"
           value={email}
@@ -105,56 +90,7 @@ const AddOrganization = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="password"
-          placeholderTextColor="black"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="First Name"
-          placeholderTextColor="black"
-          value={firstName}
-          onChangeText={setFirstName}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Last Name"
-          placeholderTextColor="black"
-          value={lastName}
-          onChangeText={setLastName}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="DOB"
-          placeholderTextColor="black"
-          value={dob}
-          onChangeText={setDob}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Personal phone number"
-          placeholderTextColor="black"
-          value={personalNum}
-          onChangeText={setPersonalNum}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Emergency phone number"
-          placeholderTextColor="black"
-          value={emergencyNum}
-          onChangeText={setEmergencyNum}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Full address"
+          placeholder="Enter the organization's address"
           placeholderTextColor="black"
           value={address}
           onChangeText={setAddress}
@@ -162,61 +98,20 @@ const AddOrganization = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="Medical identification number if applicable"
+          placeholder="Type(s), e.g., National, Private, Non-Profit, Association."
           placeholderTextColor="black"
-          value={medLicense}
-          onChangeText={setMedLicense}
+          value={type}
+          onChangeText={setType}
           style={styles.inputField}
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="National identification number"
+          placeholder="Organizaton phone number"
           placeholderTextColor="black"
-          value={natLicense}
-          onChangeText={setNatLicense}
+          value={number}
+          onChangeText={setNumber}
           style={styles.inputField}
         />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Language(s), e.g., English, French, Bambara."
-          placeholderTextColor="black"
-          value={languages}
-          onChangeText={setLanguages}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Team, e.g., Community, Health care provider, and Administrator "
-          placeholderTextColor="black"
-          value={team}
-          onChangeText={setTeam}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Center, e.g., CSCOM, CSREF, Regional, National, and Private"
-          placeholderTextColor="black"
-          value={center}
-          onChangeText={setCenter}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Organization, e.g., NGO, and ASCO"
-          placeholderTextColor="black"
-          value={organization}
-          onChangeText={setOrganization}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Role, e.g., Community health worker, Nurse, Doctor, and Program Administrator"
-          placeholderTextColor="black"
-          value={role}
-          onChangeText={setRole}
-          style={styles.inputField}
-        />
-
         <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
           <Text style={{ color: '#fff' }}>Submit</Text>
         </TouchableOpacity>

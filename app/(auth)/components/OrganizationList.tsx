@@ -1,20 +1,29 @@
 import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 
-const OrganizationList = () => {
-  const { name, email, address, number, type } = useLocalSearchParams();
-  console.log(name);
-  useEffect(() => {});
+import { useSystem } from '~/powersync/PowerSync';
 
+const OrganizationList = () => {
+  const [organization, setOrganization] = useState([{}]);
+  const { supabaseConnector } = useSystem();
+
+  useEffect(() => {
+    showOrganizations();
+  });
+
+  const showOrganizations = async () => {
+    const { data } = await supabaseConnector.getOrganizations();
+    setOrganization(data);
+  };
   return (
     <View>
-      <Text> Organization List </Text>
-      <Text> Name: {name}</Text>
-      <Text> Name: {email}</Text>
-      <Text>Name: {address}</Text>
-      <Text> Name: {number}</Text>
-      <Text>Name: {type}</Text>
+      {organization.map((item, key) => (
+        <View key={key}>
+          <Text>Name: {item.name}</Text>
+          <Text>Email: {item.email}</Text>
+        </View>
+      ))}
     </View>
   );
 };

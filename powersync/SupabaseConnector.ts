@@ -56,6 +56,7 @@ export class SupabaseConnector implements PowerSyncBackendConnector {
       data,
     };
   }
+
   async getCenters() {
     const { data, error } = await this.client.from('centers').select('*');
 

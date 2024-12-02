@@ -1,22 +1,30 @@
-import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 
+import { useSystem } from '~/powersync/PowerSync';
+
 const CenterList = () => {
-  const { name, email, address, number, type } = useLocalSearchParams();
+  const [center, setCenter] = useState([{}]);
+  const { supabaseConnector } = useSystem();
 
-  useEffect(() => {});
+  useEffect(() => {
+    showCenters();
+  });
 
+  const showCenters = async () => {
+    const { data } = await supabaseConnector.getCenters();
+    setCenter(data);
+  };
   return (
     <View>
-      <Text> Organization List </Text>
-      <Text> Name: {name}</Text>
-      <Text> Name: {email}</Text>
-      <Text>Name: {address}</Text>
-      <Text> Name: {number}</Text>
-      <Text>Name: {type}</Text>
+      <Text> Centers List </Text>
+      {center.map((item, key) => (
+        <View key={key}>
+          <Text>Name: {item.name}</Text>
+          <Text>Email: {item.email}</Text>
+        </View>
+      ))}
     </View>
   );
 };
-
 export default CenterList;
