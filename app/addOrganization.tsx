@@ -13,7 +13,7 @@ import {
 
 import { useSystem } from '~/powersync/PowerSync';
 
-const AddCenter = () => {
+const AddOrganization = () => {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
@@ -29,7 +29,7 @@ const AddCenter = () => {
   const onSignUpPress = async () => {
     setLoading(true);
     const { error } = await supabaseConnector.client
-      .from('centers')
+      .from('organizations')
       .insert([
         {
           name,
@@ -74,7 +74,7 @@ const AddCenter = () => {
         </View>
         <TextInput
           autoCapitalize="none"
-          placeholder="Center Name"
+          placeholder="Organization Name"
           placeholderTextColor="black"
           value={name}
           onChangeText={setName}
@@ -90,7 +90,7 @@ const AddCenter = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="Enter the center's address"
+          placeholder="Enter the organization's address"
           placeholderTextColor="black"
           value={address}
           onChangeText={setAddress}
@@ -98,7 +98,7 @@ const AddCenter = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="Type(s), e.g., CSCOM, CSREF, District hospital, Private clinic."
+          placeholder="Type(s), e.g., National, Private, Non-Profit, Association."
           placeholderTextColor="black"
           value={type}
           onChangeText={setType}
@@ -106,7 +106,7 @@ const AddCenter = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="center phone number"
+          placeholder="Organizaton phone number"
           placeholderTextColor="black"
           value={number}
           onChangeText={setNumber}
@@ -159,4 +159,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddCenter;
+export default AddOrganization;

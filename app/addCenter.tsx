@@ -13,7 +13,7 @@ import {
 
 import { useSystem } from '~/powersync/PowerSync';
 
-const AddOrganization = () => {
+const AddCenter = () => {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
@@ -28,8 +28,8 @@ const AddOrganization = () => {
   //Create a new organization
   const onSignUpPress = async () => {
     setLoading(true);
-    const { data, error } = await supabaseConnector.client
-      .from('organizations')
+    const { error } = await supabaseConnector.client
+      .from('centers')
       .insert([
         {
           name,
@@ -74,7 +74,7 @@ const AddOrganization = () => {
         </View>
         <TextInput
           autoCapitalize="none"
-          placeholder="Organization Name"
+          placeholder="Center Name"
           placeholderTextColor="black"
           value={name}
           onChangeText={setName}
@@ -90,7 +90,7 @@ const AddOrganization = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="Enter the organization's address"
+          placeholder="Enter the center's address"
           placeholderTextColor="black"
           value={address}
           onChangeText={setAddress}
@@ -98,7 +98,7 @@ const AddOrganization = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="Type(s), e.g., National, Private, Non-Profit, Association."
+          placeholder="Type(s), e.g., CSCOM, CSREF, District Hospital, Private Clinic."
           placeholderTextColor="black"
           value={type}
           onChangeText={setType}
@@ -106,7 +106,7 @@ const AddOrganization = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="Organizaton phone number"
+          placeholder="Center phone number"
           placeholderTextColor="black"
           value={number}
           onChangeText={setNumber}
@@ -159,4 +159,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddOrganization;
+export default AddCenter;

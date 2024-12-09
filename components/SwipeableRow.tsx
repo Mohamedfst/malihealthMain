@@ -1,9 +1,8 @@
 import React, { Component, PropsWithChildren } from 'react';
 import { Animated, StyleSheet, Text, View, I18nManager } from 'react-native';
-
 import { RectButton } from 'react-native-gesture-handler';
-
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+
 import { Todo } from '~/models/todo';
 
 interface Props {
