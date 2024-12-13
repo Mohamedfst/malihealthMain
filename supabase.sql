@@ -41,3 +41,33 @@ create trigger on_auth_user_created
 
 drop publication if exists powersync;
 create publication powersync for table public.todos;
+
+
+
+create function public.handle_new_provider()
+returns trigger as $$
+begin
+  insert into public.providers (id, name, middle_name, last_name, 
+  dob, medical_license, role, number, email, address, emergency_num, 
+  languages, health_team, health_center, organization_id)
+  values (new.id, new.name,
+  new.raw_user_meta_data->>'middle_name', 
+  new.raw_user_meta_data->>'last_name', 
+  new.raw_user_meta_data->>'dob', 
+  new.raw_user_meta_data->>'medical_license', 
+  new.raw_user_meta_data->>'role', 
+  new.raw_user_meta_data->>'number', 
+  new.raw_user_meta_data->>'email', 
+  new.raw_user_meta_data->>'address', 
+  new.raw_user_meta_data->>'emergency_num', 
+  new.raw_user_meta_data->>'languages', 
+  new.raw_user_meta_data->>'health_team', 
+  new.raw_user_meta_data->>'health_center', 
+  new.raw_user_meta_data->>'organization_id'
+  );
+  return new;
+end;
+$$ language plpgsql security definer;
+create trigger on_public_provider_created
+  after insert on public.providers
+  for each row execute procedure public.handle_new_provider();

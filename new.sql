@@ -72,3 +72,53 @@ create trigger on_auth_user_created
 
 drop publication if exists powersync;
 create publication powersync for table public.todos;
+
+
+
+
+CREATE TABLE IF NOT EXISTS "patients"(
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+  "name" text,
+  "middle_name" text,
+  "last_name" text,
+  "dob" text,
+  "national_license" text,
+  "number" text,
+  "email" text,
+  "address" text,
+  "emergency_num" text,
+  "languages" text,
+  "center_id" uuid NOT NULL,
+  "organization_id" uuid NOT NULL,
+  "providers_id" uuid NOT NULL
+);
+
+--> statement-breakpoint 
+CREATE TABLE IF NOT EXISTS "providers"(
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+  "name" text,
+  "middle_name" text,
+  "last_name" text,
+  "dob" text,
+  "medical_license" text,
+  "role" text,
+  "number" text,
+  "email" text,
+  "address" text,
+  "emergency_num" text,
+  "languages" text,
+  "health_team" text,
+  "health_center" text,
+  "organization_id" uuid NOT NULL
+);
+
+
+
+CREATE TABLE IF NOT EXISTS "campaigns" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"title" text,
+  "description" text,
+	"is_active" integer DEFAULT 0,
+	"modified_at" timestamp DEFAULT now(),
+	"organization_id" uuid NOT NULL
+);

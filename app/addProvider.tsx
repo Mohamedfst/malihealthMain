@@ -13,40 +13,62 @@ import {
 
 import { useSystem } from '~/powersync/PowerSync';
 
-const AddCenter = () => {
+const AddProvider = () => {
   const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
-  const [email, setEmail] = useState('');
+  const [last_name, setLastName] = useState('');
+  const [dob, setDob] = useState('');
   const [number, setNumber] = useState('');
-  const [type, setType] = useState('');
-
+  const [address, setAddress] = useState('');
+  const [emergency_num, setEmergencyNum] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [nat_license, setNatLicense] = useState('');
+  const [medical_license, setMedicalLicense] = useState('');
+  const [languages, setLanguages] = useState('');
+  const [team, setHealthTeam] = useState('');
+  const [center, setHealthCenter] = useState('');
   const [loading, setLoading] = useState(false);
   const { supabaseConnector } = useSystem();
 
   const router = useRouter();
   const organization_id = process.env.EXPO_PUBLIC_Organization;
+  const role: string = 'Provider';
   //Create a new organization
   const onSignUpPress = async () => {
     setLoading(true);
-    const { error } = await supabaseConnector.client
-      .from('centers')
-      .insert([
-        {
-          name,
+
+    const {
+      data: { session },
+      error,
+    } = await supabaseConnector.client.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          first_name: name,
+          last_name,
+          dob,
+          personal_num: number,
+          emergency_num,
           address,
-          email,
-          number,
-          type,
+          med_license: medical_license,
+          nat_license,
+          languages,
+          team,
+          center,
+          role,
           organization_id,
         },
-      ])
-      .select();
+      },
+    });
+
     if (error) {
-      console.log('error', error);
       Alert.alert(error.message);
+    } else if (!session) {
+      Alert.alert('Please check your inbox for email verification!');
     }
     setLoading(false);
-    router.push('/(auth)');
+    router.push('/(provider)');
   };
 
   return (
@@ -75,7 +97,7 @@ const AddCenter = () => {
         </View>
         <TextInput
           autoCapitalize="none"
-          placeholder="Center Name"
+          placeholder="Provider Name"
           placeholderTextColor="black"
           value={name}
           onChangeText={setName}
@@ -83,7 +105,15 @@ const AddCenter = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="john@doe.com"
+          placeholder="Provider Last Name"
+          placeholderTextColor="black"
+          value={last_name}
+          onChangeText={setLastName}
+          style={styles.inputField}
+        />
+        <TextInput
+          autoCapitalize="none"
+          placeholder="Email"
           placeholderTextColor="black"
           value={email}
           onChangeText={setEmail}
@@ -91,7 +121,40 @@ const AddCenter = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="Enter the center's address"
+          placeholder="DOB"
+          placeholderTextColor="black"
+          value={dob}
+          onChangeText={setDob}
+          style={styles.inputField}
+        />
+        <TextInput
+          autoCapitalize="none"
+          placeholder="password"
+          placeholderTextColor="black"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          style={styles.inputField}
+        />
+        <TextInput
+          autoCapitalize="none"
+          placeholder="Personal Number"
+          placeholderTextColor="black"
+          value={number}
+          onChangeText={setNumber}
+          style={styles.inputField}
+        />
+        <TextInput
+          autoCapitalize="none"
+          placeholder="Emergency Number"
+          placeholderTextColor="black"
+          value={emergency_num}
+          onChangeText={setEmergencyNum}
+          style={styles.inputField}
+        />
+        <TextInput
+          autoCapitalize="none"
+          placeholder="Address"
           placeholderTextColor="black"
           value={address}
           onChangeText={setAddress}
@@ -99,18 +162,42 @@ const AddCenter = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="Type(s), e.g., CSCOM, CSREF, District Hospital, Private Clinic."
+          placeholder="Languages"
           placeholderTextColor="black"
-          value={type}
-          onChangeText={setType}
+          value={languages}
+          onChangeText={setLanguages}
           style={styles.inputField}
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="Center phone number"
+          placeholder="Medical License"
           placeholderTextColor="black"
-          value={number}
-          onChangeText={setNumber}
+          value={medical_license}
+          onChangeText={setMedicalLicense}
+          style={styles.inputField}
+        />
+        <TextInput
+          autoCapitalize="none"
+          placeholder="National License"
+          placeholderTextColor="black"
+          value={nat_license}
+          onChangeText={setNatLicense}
+          style={styles.inputField}
+        />
+        <TextInput
+          autoCapitalize="none"
+          placeholder="Health Team"
+          placeholderTextColor="black"
+          value={team}
+          onChangeText={setHealthTeam}
+          style={styles.inputField}
+        />
+        <TextInput
+          autoCapitalize="none"
+          placeholder="Health Center"
+          placeholderTextColor="black"
+          value={center}
+          onChangeText={setHealthCenter}
           style={styles.inputField}
         />
         <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
@@ -160,4 +247,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddCenter;
+export default AddProvider;

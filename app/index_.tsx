@@ -28,15 +28,13 @@ const index_ = () => {
   const [team, setTeam] = useState('');
   const [center, setCenter] = useState('');
   const [organization, setOrganization] = useState('');
-  const [role, setRole] = useState('');
 
   const [loading, setLoading] = useState(false);
   const { supabaseConnector } = useSystem();
-
+  const role = 'Admin';
   //Create a new user
   const onSignUpPress = async () => {
     setLoading(true);
-
     const {
       data: { session },
       error,
@@ -206,14 +204,6 @@ const index_ = () => {
           placeholderTextColor="black"
           value={organization}
           onChangeText={setOrganization}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Role, e.g., Community health worker, Nurse, Doctor, and Program Administrator"
-          placeholderTextColor="black"
-          value={role}
-          onChangeText={setRole}
           style={styles.inputField}
         />
 

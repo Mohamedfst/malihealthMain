@@ -41,7 +41,6 @@ export class SupabaseConnector implements PowerSyncBackendConnector {
       email: username,
       password,
     });
-
     if (error) {
       throw error;
     }

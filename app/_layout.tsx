@@ -8,6 +8,7 @@ import { PowerSyncProvider } from '~/powersync/PowerSyncProvider';
 const InitialLayout = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
+  const [role, setRole] = useState('');
 
   const segments = useSegments();
   const router = useRouter();
@@ -24,6 +25,7 @@ const InitialLayout = () => {
     const { data } = supabaseConnector.client.auth.onAuthStateChange(async (event, session) => {
       console.log('supabase.auth.onAuthStateChange', event, session);
       setSession(session);
+      setRole(session?.user.user_metadata.role);
       setInitialized(true);
     });
     return () => {
@@ -37,9 +39,12 @@ const InitialLayout = () => {
     // Check if the path/url is in the (auth) group
     const inAuthGroup = segments[0] === '(auth)';
 
-    if (session && !inAuthGroup) {
+    if (session && !inAuthGroup && role === 'Admin') {
       // Redirect authenticated users to the list page
       router.replace('/(auth)/');
+    } else if (session && !inAuthGroup && role === 'Community worker') {
+      // Redirect authenticated users to the list page
+      router.replace('/(provider)/');
     } else if (!session) {
       // Redirect unauthenticated users to the login page
       router.replace('/');

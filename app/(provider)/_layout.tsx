@@ -28,7 +28,7 @@ const Layout = () => {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Home',
+            title: 'Home Provider',
             headerStyle: { backgroundColor: '#151515' },
             headerTitleStyle: { color: '#fff' },
             headerLeft: () => (
@@ -47,16 +47,7 @@ const Layout = () => {
         <Tabs.Screen
           name="components/OrganizationList"
           options={{
-            title: 'Organization',
-            headerStyle: { backgroundColor: '#151515' },
-            headerTitleStyle: { color: '#fff' },
-            tabBarIcon: ({ color }) => <FontAwesome size={28} name="hospital-o" color={color} />,
-          }}
-        />
-        <Tabs.Screen
-          name="components/CenterList"
-          options={{
-            title: 'Center',
+            title: 'Patients',
             headerStyle: { backgroundColor: '#151515' },
             headerTitleStyle: { color: '#fff' },
             tabBarIcon: ({ color }) => <FontAwesome size={28} name="hospital-o" color={color} />,
