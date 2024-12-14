@@ -6,21 +6,37 @@ import { DataTable, FAB } from 'react-native-paper';
 
 import { useSystem } from '~/powersync/PowerSync';
 
-const OrganizationList = () => {
-  const [organization, setOrganization] = useState([{}]);
+const ShowPatients = () => {
+  const [patients, setPatients] = useState([{}]);
+  const [user, setUser] = useState({});
   const { supabaseConnector } = useSystem();
 
   useEffect(() => {
-    showOrganizations();
+    showPatients();
+    currentUser();
   });
 
-  const showOrganizations = async () => {
-    const { data } = await supabaseConnector.getOrganizations();
-    setOrganization(data);
+  const currentUser = async () => {
+    const { session } = await supabaseConnector.fetchCredentials();
+    setUser(session.user.user_metadata);
+  };
+
+  const showPatients = async () => {
+    const { data } = await supabaseConnector.getPatients();
+    setPatients(data);
   };
   return (
     <View>
-      <FAB icon="plus" style={styles.fab} onPress={() => router.push('/addOrganization')} />
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        onPress={() => {
+          router.push({
+            pathname: '/addPatient',
+            params: user,
+          });
+        }}
+      />
       <DataTable>
         <DataTable.Header>
           <DataTable.Title sortDirection="descending">Name</DataTable.Title>
@@ -28,8 +44,8 @@ const OrganizationList = () => {
           <DataTable.Title> Type </DataTable.Title>
         </DataTable.Header>
 
-        {organization &&
-          organization.map((item, key) => (
+        {patients &&
+          patients.map((item, key) => (
             <DataTable.Row key={key}>
               <DataTable.Cell
                 onPress={() => {
@@ -86,4 +102,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OrganizationList;
+export default ShowPatients;

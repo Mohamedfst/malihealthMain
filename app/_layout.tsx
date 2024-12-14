@@ -45,6 +45,9 @@ const InitialLayout = () => {
     } else if (session && !inAuthGroup && role === 'Community worker') {
       // Redirect authenticated users to the list page
       router.replace('/(provider)/');
+    } else if (session && !inAuthGroup && role === 'Provider') {
+      // Redirect authenticated users to the list page
+      router.replace('/(provider)/');
     } else if (!session) {
       // Redirect unauthenticated users to the login page
       router.replace('/');

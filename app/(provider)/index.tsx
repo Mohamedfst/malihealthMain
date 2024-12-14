@@ -12,6 +12,7 @@ const Dashboard = () => {
   useEffect(() => {
     getUserName();
   });
+
   const getUserName = async () => {
     const { data, error } = await supabaseConnector.client.auth.getSession();
     if (error) {
@@ -32,7 +33,7 @@ const Dashboard = () => {
       {role && role === 'Admin' && (
         <>
           <Text style={styles.container}>
-            <Text> rHello inside provider folder {role},</Text>
+            <Text> Hello {role},</Text>
             <Text style={styles.content}> {name} </Text>
           </Text>
         </>
@@ -40,7 +41,7 @@ const Dashboard = () => {
       {role && role === 'Provider' && (
         <>
           <Text style={styles.container}>
-            <Text> Hello inside provider folder {role},</Text>
+            <Text> Hello {role},</Text>
             <Text style={styles.content}> {name} </Text>
           </Text>
         </>
@@ -48,7 +49,7 @@ const Dashboard = () => {
       {role && role === 'Community worker' && (
         <>
           <Text style={styles.container}>
-            <Text> Hello inside provider folder,</Text>
+            <Text> Hello provider ,</Text>
             <Text style={styles.content}> {name} </Text>
           </Text>
         </>

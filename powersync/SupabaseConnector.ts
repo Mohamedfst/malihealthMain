@@ -42,11 +42,22 @@ export class SupabaseConnector implements PowerSyncBackendConnector {
       password,
     });
     if (error) {
-      throw error;
+      throw error; 
     }
   }
   async getOrganizations() {
     const { data, error } = await this.client.from('organizations').select('*');
+
+    if (error) {
+      throw error;
+    }
+    return {
+      data,
+    };
+  }
+
+  async getPatients() {
+    const { data, error } = await this.client.from('patients').select('*');
 
     if (error) {
       throw error;
@@ -76,7 +87,7 @@ export class SupabaseConnector implements PowerSyncBackendConnector {
       throw new Error(`Could not fetch Supabase credentials: ${error}`);
     }
 
-    console.debug('session expires at', session.expires_at);
+    //console.debug('session expires at', session.expires_at);
 
     return {
       cliennt: this.client,
@@ -84,6 +95,7 @@ export class SupabaseConnector implements PowerSyncBackendConnector {
       token: session.access_token ?? '',
       expiresAt: session.expires_at ? new Date(session.expires_at * 1000) : undefined,
       userID: session.user.id,
+      session,
     };
   }
 

@@ -28,7 +28,7 @@ const Layout = () => {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Home Provider',
+            title: 'Home',
             headerStyle: { backgroundColor: '#151515' },
             headerTitleStyle: { color: '#fff' },
             headerLeft: () => (
@@ -45,7 +45,7 @@ const Layout = () => {
           }}
         />
         <Tabs.Screen
-          name="components/OrganizationList"
+          name="components/PatientsList"
           options={{
             title: 'Patients',
             headerStyle: { backgroundColor: '#151515' },
