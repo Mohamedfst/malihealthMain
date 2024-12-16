@@ -24,7 +24,7 @@ const AddCenter = () => {
   const { supabaseConnector } = useSystem();
 
   const router = useRouter();
-  const organization_id = process.env.EXPO_PUBLIC_Organization;
+  //const organization_id = process.env.EXPO_PUBLIC_Organization;
   //Create a new organization
   const onSignUpPress = async () => {
     setLoading(true);
@@ -37,7 +37,6 @@ const AddCenter = () => {
           email,
           number,
           type,
-          organization_id,
         },
       ])
       .select();

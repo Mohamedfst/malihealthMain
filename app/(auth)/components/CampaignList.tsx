@@ -6,7 +6,7 @@ import { DataTable, FAB } from 'react-native-paper';
 
 import { useSystem } from '~/powersync/PowerSync';
 
-const OrganizationList = () => {
+const CampaignList = () => {
   const [organization, setOrganization] = useState([{}]);
   const [user, setUser] = useState({});
   const { supabaseConnector } = useSystem();
@@ -16,14 +16,14 @@ const OrganizationList = () => {
     currentUser();
   });
 
-  const showOrganizations = async () => {
-    const { data } = await supabaseConnector.getOrganizations();
-    setOrganization(data);
-  };
-
   const currentUser = async () => {
     const { session } = await supabaseConnector.fetchCredentials();
     setUser(session.user.user_metadata);
+  };
+
+  const showOrganizations = async () => {
+    const { data } = await supabaseConnector.getCampaigns();
+    setOrganization(data);
   };
   return (
     <View>
@@ -32,16 +32,15 @@ const OrganizationList = () => {
         style={styles.fab}
         onPress={() => {
           router.push({
-            pathname: '/addOrganization',
+            pathname: '/addCampaign',
             params: user,
           });
         }}
       />
       <DataTable>
         <DataTable.Header>
-          <DataTable.Title sortDirection="descending">Name</DataTable.Title>
-          <DataTable.Title>Email</DataTable.Title>
-          <DataTable.Title> Type </DataTable.Title>
+          <DataTable.Title sortDirection="descending">Title</DataTable.Title>
+          <DataTable.Title>Active</DataTable.Title>
         </DataTable.Header>
 
         {organization &&
@@ -50,36 +49,26 @@ const OrganizationList = () => {
               <DataTable.Cell
                 onPress={() => {
                   router.push({
-                    pathname: '/detailsOrganization',
+                    pathname: '/detailsCampaign',
                     params: item,
                   });
                 }}>
-                {item.name}
+                {item.title}
               </DataTable.Cell>
 
               <DataTable.Cell
                 onPress={() => {
                   router.push({
-                    pathname: '/detailsOrganization',
+                    pathname: '/detailsCampaign',
                     params: item,
                   });
                 }}>
-                {item.email}
+                {item.is_active}
               </DataTable.Cell>
               <DataTable.Cell
                 onPress={() => {
                   router.push({
-                    pathname: '/detailsOrganization',
-                    params: item,
-                  });
-                }}>
-                {'     '}
-                {item.type}
-              </DataTable.Cell>
-              <DataTable.Cell
-                onPress={() => {
-                  router.push({
-                    pathname: '/detailsOrganization',
+                    pathname: '/detailsCampaign',
                     params: item,
                   });
                 }}>
@@ -102,4 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OrganizationList;
+export default CampaignList;

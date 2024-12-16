@@ -1,6 +1,5 @@
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { Link, useRouter, useLocalSearchParams } from 'expo-router';
-import React, { useState, useEffect } from 'react';
+import { Link, useRouter } from 'expo-router';
+import React, { useState } from 'react';
 import {
   Alert,
   View,
@@ -11,44 +10,29 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
 
 import { useSystem } from '~/powersync/PowerSync';
 
-const data = [
-  { label: 'National', value: 'National' },
-  { label: 'Non-Profit', value: 'Non-Profit' },
-  { label: 'Association', value: 'Association' },
-  { label: 'Private', value: 'Private' },
-];
+const AddCampaign = () => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [is_active, setIsActive] = useState('');
 
-const AddOrganization = () => {
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
-  const [email, setEmail] = useState('');
-  const [number, setNumber] = useState('');
-  const [type, setType] = useState('');
   const [loading, setLoading] = useState(false);
-  const passedParams: any = useLocalSearchParams();
   const { supabaseConnector } = useSystem();
 
   const router = useRouter();
-
-  useEffect(() => {
-    console.log('Passed Params ->', passedParams);
-  });
+  //const organization_id = process.env.EXPO_PUBLIC_Organization;
   //Create a new organization
   const onSignUpPress = async () => {
     setLoading(true);
     const { error } = await supabaseConnector.client
-      .from('organization')
+      .from('campaigns')
       .insert([
         {
-          name,
-          address,
-          email,
-          number,
-          type,
+          title,
+          description,
+          is_active,
         },
       ])
       .select();
@@ -86,55 +70,27 @@ const AddOrganization = () => {
         </View>
         <TextInput
           autoCapitalize="none"
-          placeholder="Organization Name"
+          placeholder="Enter Campaign Name"
           placeholderTextColor="black"
-          value={name}
-          onChangeText={setName}
+          value={title}
+          onChangeText={setTitle}
           style={styles.inputField}
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="john@doe.com"
+          placeholder="Enter description"
           placeholderTextColor="black"
-          value={email}
-          onChangeText={setEmail}
+          value={description}
+          onChangeText={setDescription}
           style={styles.inputField}
         />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Enter the organization's address"
+         <TextInput
+          keyboardType="numeric"
+          maxLength={1}
+          placeholder="Enter 1 or 0"
           placeholderTextColor="black"
-          value={address}
-          onChangeText={setAddress}
-          style={styles.inputField}
-        />
-        <Dropdown
-          style={styles.inputField}
-          placeholderStyle={styles.inputField}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={data}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder="Select type"
-          searchPlaceholder="Search..."
-          value={type}
-          onChange={(item) => {
-            setType(item.value);
-          }}
-          renderLeftIcon={() => (
-            <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-          )}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Organizaton phone number"
-          placeholderTextColor="black"
-          value={number}
-          onChangeText={setNumber}
+          value={is_active}
+          onChangeText={setIsActive}
           style={styles.inputField}
         />
         <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
@@ -182,29 +138,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 4,
   },
-  dropdown: {
-    margin: 16,
-    height: 50,
-    borderBottomColor: 'gray',
-    borderBottomWidth: 0.5,
-  },
-  icon: {
-    marginRight: 5,
-  },
-  placeholderStyle: {
-    fontSize: 16,
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
-  },
 });
 
-export default AddOrganization;
+export default AddCampaign;

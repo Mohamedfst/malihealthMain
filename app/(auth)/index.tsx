@@ -48,7 +48,7 @@ const Dashboard = () => {
       {role && role === 'Community worker' && (
         <>
           <Text style={styles.container}>
-            <Text> Hello Provider,</Text>
+            <Text> Hello Admin,</Text>
             <Text style={styles.content}> {name} </Text>
           </Text>
         </>

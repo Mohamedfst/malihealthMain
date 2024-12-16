@@ -39,12 +39,9 @@ const InitialLayout = () => {
     // Check if the path/url is in the (auth) group
     const inAuthGroup = segments[0] === '(auth)';
 
-    if (session && !inAuthGroup && role === 'Admin') {
+    if (session && !inAuthGroup && role === 'Community worker') {
       // Redirect authenticated users to the list page
       router.replace('/(auth)/');
-    } else if (session && !inAuthGroup && role === 'Community worker') {
-      // Redirect authenticated users to the list page
-      router.replace('/(provider)/');
     } else if (session && !inAuthGroup && role === 'Provider') {
       // Redirect authenticated users to the list page
       router.replace('/(provider)/');

@@ -42,12 +42,20 @@ export class SupabaseConnector implements PowerSyncBackendConnector {
       password,
     });
     if (error) {
-      throw error; 
+      throw error;
     }
   }
   async getOrganizations() {
-    const { data, error } = await this.client.from('organizations').select('*');
-
+    const { data, error } = await this.client.from('organization').select('*');
+    if (error) {
+      throw error;
+    }
+    return {
+      data,
+    };
+  }
+  async getCampaigns() {
+    const { data, error } = await this.client.from('campaigns').select('*');
     if (error) {
       throw error;
     }
