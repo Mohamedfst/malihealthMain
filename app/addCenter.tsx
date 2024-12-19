@@ -1,7 +1,7 @@
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { Link, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Alert,
   View,
   TextInput,
   StyleSheet,
@@ -10,8 +10,19 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 
+import { ORGANIZATION_TABlE, CENTER_TABlE } from '~/powersync/AppSchema';
 import { useSystem } from '~/powersync/PowerSync';
+import { uuid } from '~/powersync/uuid';
+
+const healthCenters = [
+  { label: 'CSCOM', value: 'CSCOM' },
+  { label: 'CSREF', value: 'CSREF' },
+  { label: 'Regional health center', value: 'Regional health center' },
+  { label: 'District/National Health Center', value: 'District/National Health Center' },
+  { label: 'Private health center', value: 'Private health center' },
+];
 
 const AddCenter = () => {
   const [name, setName] = useState('');
@@ -19,30 +30,39 @@ const AddCenter = () => {
   const [email, setEmail] = useState('');
   const [number, setNumber] = useState('');
   const [type, setType] = useState('');
+  const [org, setOrg] = useState('');
+  const [data, setData] = useState([{}]);
+  const [organization, setOrganization] = useState([{}]);
 
   const [loading, setLoading] = useState(false);
-  const { supabaseConnector } = useSystem();
+  const { db } = useSystem();
 
   const router = useRouter();
-  //const organization_id = process.env.EXPO_PUBLIC_Organization;
-  //Create a new organization
-  const onSignUpPress = async () => {
-    setLoading(true);
-    const { error } = await supabaseConnector.client
-      .from('centers')
-      .insert([
-        {
-          name,
-          address,
-          email,
-          number,
-          type,
-        },
-      ])
-      .select();
-    if (error) {
-      console.log('error', error);
-      Alert.alert(error.message);
+
+  useEffect(() => {
+    showOrganizations();
+  });
+  const showOrganizations = async () => {
+    const DropDownMenu = [];
+    const result = await db.selectFrom(ORGANIZATION_TABlE).selectAll().execute();
+    setOrganization(result);
+    if (organization.length > 0) {
+      for (let i = 0; i < organization.length; i++) {
+        const currentObject = { label: `${organization[i].name}`, value: `${organization[i].id}` };
+        DropDownMenu.push(currentObject);
+      }
+      setData(DropDownMenu);
+    }
+  };
+  const addCenter = async () => {
+    const todoId = uuid();
+    try {
+      await db
+        .insertInto(CENTER_TABlE)
+        .values({ id: todoId, name, address, email, number, type, organization_id: org })
+        .execute();
+    } catch (error) {
+      console.error('Error inserting center:', error);
     }
     setLoading(false);
     router.push('/(auth)');
@@ -98,25 +118,59 @@ const AddCenter = () => {
         />
         <TextInput
           autoCapitalize="none"
-          placeholder="Type(s), e.g., CSCOM, CSREF, District Hospital, Private Clinic."
-          placeholderTextColor="black"
-          value={type}
-          onChangeText={setType}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
           placeholder="Center phone number"
           placeholderTextColor="black"
           value={number}
           onChangeText={setNumber}
           style={styles.inputField}
         />
-        <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
+        <Dropdown
+          style={styles.inputField}
+          placeholderStyle={styles.inputField}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={data}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder="Select Organization"
+          searchPlaceholder="Search..."
+          value={org}
+          onChange={(item) => {
+            setOrg(item.value);
+          }}
+          renderLeftIcon={() => (
+            <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+          )}
+        />
+        <Dropdown
+          style={styles.inputField}
+          placeholderStyle={styles.inputField}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={healthCenters}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder="Select type"
+          searchPlaceholder="Search..."
+          value={type}
+          onChange={(item) => {
+            setType(item.value);
+          }}
+          renderLeftIcon={() => (
+            <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+          )}
+        />
+        <TouchableOpacity onPress={addCenter} style={styles.button}>
           <Text style={{ color: '#fff' }}>Submit</Text>
         </TouchableOpacity>
         <TouchableOpacity>
-          <Link href="/">
+          <Link href="/(auth)">
             <Text style={{ textAlign: 'center', color: '#fff' }}> Cancel </Text>
           </Link>
         </TouchableOpacity>
@@ -156,6 +210,29 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     padding: 12,
     borderRadius: 4,
+  },
+  dropdown: {
+    margin: 16,
+    height: 50,
+    borderBottomColor: 'gray',
+    borderBottomWidth: 0.5,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
   },
 });
 

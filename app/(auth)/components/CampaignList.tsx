@@ -4,15 +4,15 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { DataTable, FAB } from 'react-native-paper';
 
+import { CAMPAIGN_TABLE } from '~/powersync/AppSchema';
 import { useSystem } from '~/powersync/PowerSync';
-
 const CampaignList = () => {
-  const [organization, setOrganization] = useState([{}]);
+  const [campaign, setCampaign] = useState([{}]);
   const [user, setUser] = useState({});
-  const { supabaseConnector } = useSystem();
+  const { supabaseConnector, db } = useSystem();
 
   useEffect(() => {
-    showOrganizations();
+    showPatients();
     currentUser();
   });
 
@@ -21,9 +21,9 @@ const CampaignList = () => {
     setUser(session.user.user_metadata);
   };
 
-  const showOrganizations = async () => {
-    const { data } = await supabaseConnector.getCampaigns();
-    setOrganization(data);
+  const showPatients = async () => {
+    const result = await db.selectFrom(CAMPAIGN_TABLE).selectAll().execute();
+    setCampaign(result);
   };
   return (
     <View>
@@ -43,8 +43,8 @@ const CampaignList = () => {
           <DataTable.Title>Active</DataTable.Title>
         </DataTable.Header>
 
-        {organization &&
-          organization.map((item, key) => (
+        {campaign &&
+          campaign.map((item, key) => (
             <DataTable.Row key={key}>
               <DataTable.Cell
                 onPress={() => {

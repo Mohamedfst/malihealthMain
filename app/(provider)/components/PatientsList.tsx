@@ -4,12 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { DataTable, FAB } from 'react-native-paper';
 
+import { PATIENT_TABLE } from '~/powersync/AppSchema';
 import { useSystem } from '~/powersync/PowerSync';
-
 const ShowPatients = () => {
   const [patients, setPatients] = useState([{}]);
   const [user, setUser] = useState({});
-  const { supabaseConnector } = useSystem();
+  const { supabaseConnector, db } = useSystem();
 
   useEffect(() => {
     showPatients();
@@ -20,11 +20,11 @@ const ShowPatients = () => {
     const { session } = await supabaseConnector.fetchCredentials();
     setUser(session.user.user_metadata);
   };
-
   const showPatients = async () => {
-    const { data } = await supabaseConnector.getPatients();
-    setPatients(data);
+    const result = await db.selectFrom(PATIENT_TABLE).selectAll().execute();
+    setPatients(result);
   };
+
   return (
     <View>
       <FAB

@@ -1,7 +1,7 @@
-import { Link, useRouter, useLocalSearchParams } from 'expo-router';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { Link, useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import {
-  Alert,
   View,
   TextInput,
   StyleSheet,
@@ -10,9 +10,11 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 
+import { PATIENT_TABLE, CENTER_TABlE } from '~/powersync/AppSchema';
 import { useSystem } from '~/powersync/PowerSync';
-
+import { uuid } from '~/powersync/uuid';
 const AddPatient = () => {
   const [name, setName] = useState('');
   const [last_name, setLastName] = useState('');
@@ -23,40 +25,50 @@ const AddPatient = () => {
   const [address, setAddress] = useState('');
   const [emergency_num, setEmerNum] = useState('');
   const [languages, setLanguages] = useState('');
-
+  const [type, setType] = useState('');
+  const [center, setCenter] = useState([{}]);
+  const [data, setData] = useState([{}]);
   const [loading, setLoading] = useState(false);
-  const passedParams: any = useLocalSearchParams();
-  const { supabaseConnector } = useSystem();
+  const { db } = useSystem();
 
   const router = useRouter();
   useEffect(() => {
-    console.log('Passed Params ->', passedParams);
+    showCentersMembership();
   });
-  //Create a new organization
-  const onSignUpPress = async () => {
-    setLoading(true);
-    const { error } = await supabaseConnector.client
-      .from('patients')
-      .insert([
-        {
+  const showCentersMembership = async () => {
+    const DropDownMenu = [];
+    const result = await db.selectFrom(CENTER_TABlE).selectAll().execute();
+    setCenter(result);
+    if (center.length > 0) {
+      for (let i = 0; i < center.length; i++) {
+        const currentObject = { label: `${center[i].name}`, value: `${center[i].id}` };
+        DropDownMenu.push(currentObject);
+      }
+      setData(DropDownMenu);
+    }
+  };
+  const addOrganization = async () => {
+    // console.log('Inside the addTodo');
+    const todoId = uuid();
+    try {
+      await db
+        .insertInto(PATIENT_TABLE)
+        .values({
+          id: todoId,
           name,
           last_name,
           dob,
           national_license,
           number,
-          address,
           email,
+          address,
           emergency_num,
           languages,
-          center_id: passedParams.center,
-          organization_id: passedParams.organization,
-          providers_id: passedParams.sub,
-        },
-      ])
-      .select();
-    if (error) {
-      console.log('error', error);
-      Alert.alert(error.message);
+          center_id: type,
+        })
+        .execute();
+    } catch (error) {
+      console.error('Error inserting Patient:', error);
     }
     setLoading(false);
     router.push('/(provider)');
@@ -158,7 +170,28 @@ const AddPatient = () => {
           onChangeText={setLanguages}
           style={styles.inputField}
         />
-        <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
+        <Dropdown
+          style={styles.inputField}
+          placeholderStyle={styles.inputField}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={data}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder="Select type"
+          searchPlaceholder="Search..."
+          value={type}
+          onChange={(item) => {
+            setType(item.value);
+          }}
+          renderLeftIcon={() => (
+            <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+          )}
+        />
+        <TouchableOpacity onPress={addOrganization} style={styles.button}>
           <Text style={{ color: '#fff' }}>Submit</Text>
         </TouchableOpacity>
         <TouchableOpacity>
@@ -202,6 +235,29 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     padding: 12,
     borderRadius: 4,
+  },
+  dropdown: {
+    margin: 16,
+    height: 50,
+    borderBottomColor: 'gray',
+    borderBottomWidth: 0.5,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
   },
 });
 

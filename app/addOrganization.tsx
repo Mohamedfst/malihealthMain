@@ -1,8 +1,7 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { Link, useRouter, useLocalSearchParams } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import {
-  Alert,
   View,
   TextInput,
   StyleSheet,
@@ -13,10 +12,11 @@ import {
 } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
+import { ORGANIZATION_TABlE } from '~/powersync/AppSchema';
 import { useSystem } from '~/powersync/PowerSync';
-
+import { uuid } from '~/powersync/uuid';
 const data = [
-  { label: 'National', value: 'National' },
+  { label: 'National', value: 'Nationalfd' },
   { label: 'Non-Profit', value: 'Non-Profit' },
   { label: 'Association', value: 'Association' },
   { label: 'Private', value: 'Private' },
@@ -29,32 +29,21 @@ const AddOrganization = () => {
   const [number, setNumber] = useState('');
   const [type, setType] = useState('');
   const [loading, setLoading] = useState(false);
-  const passedParams: any = useLocalSearchParams();
-  const { supabaseConnector } = useSystem();
+  const { db } = useSystem();
 
   const router = useRouter();
 
-  useEffect(() => {
-    console.log('Passed Params ->', passedParams);
-  });
-  //Create a new organization
-  const onSignUpPress = async () => {
-    setLoading(true);
-    const { error } = await supabaseConnector.client
-      .from('organization')
-      .insert([
-        {
-          name,
-          address,
-          email,
-          number,
-          type,
-        },
-      ])
-      .select();
-    if (error) {
-      console.log('error', error);
-      Alert.alert(error.message);
+  useEffect(() => {});
+
+  const addOrganization = async () => {
+    const todoId = uuid();
+    try {
+      await db
+        .insertInto(ORGANIZATION_TABlE)
+        .values({ id: todoId, name, address, email, number, type })
+        .execute();
+    } catch (error) {
+      console.error('Error inserting organization:', error);
     }
     setLoading(false);
     router.push('/(auth)');
@@ -137,7 +126,7 @@ const AddOrganization = () => {
           onChangeText={setNumber}
           style={styles.inputField}
         />
-        <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
+        <TouchableOpacity onPress={addOrganization} style={styles.button}>
           <Text style={{ color: '#fff' }}>Submit</Text>
         </TouchableOpacity>
         <TouchableOpacity>

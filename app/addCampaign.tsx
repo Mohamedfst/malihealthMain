@@ -1,7 +1,7 @@
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { Link, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Alert,
   View,
   TextInput,
   StyleSheet,
@@ -10,35 +10,53 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 
+import { CENTER_TABlE, CAMPAIGN_TABLE } from '~/powersync/AppSchema';
 import { useSystem } from '~/powersync/PowerSync';
-
+import { uuid } from '~/powersync/uuid';
 const AddCampaign = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [is_active, setIsActive] = useState('');
-
+  const [type, setType] = useState('');
+  const [center, setCenter] = useState([{}]);
+  const [data, setData] = useState([{}]);
   const [loading, setLoading] = useState(false);
-  const { supabaseConnector } = useSystem();
-
+  const { db } = useSystem();
   const router = useRouter();
-  //const organization_id = process.env.EXPO_PUBLIC_Organization;
-  //Create a new organization
-  const onSignUpPress = async () => {
-    setLoading(true);
-    const { error } = await supabaseConnector.client
-      .from('campaigns')
-      .insert([
-        {
+
+  useEffect(() => {
+    showCentersMembership();
+  });
+
+  const showCentersMembership = async () => {
+    const DropDownMenu = [];
+    const result = await db.selectFrom(CENTER_TABlE).selectAll().execute();
+    setCenter(result);
+    if (center.length > 0) {
+      for (let i = 0; i < center.length; i++) {
+        const currentObject = { label: `${center[i].name}`, value: `${center[i].id}` };
+        DropDownMenu.push(currentObject);
+      }
+      setData(DropDownMenu);
+    }
+  };
+  const addCampaign = async () => {
+    const todoId = uuid();
+    try {
+      await db
+        .insertInto(CAMPAIGN_TABLE)
+        .values({
+          id: todoId,
           title,
           description,
           is_active,
-        },
-      ])
-      .select();
-    if (error) {
-      console.log('error', error);
-      Alert.alert(error.message);
+          center_id: type,
+        })
+        .execute();
+    } catch (error) {
+      console.error('Error inserting Campaign:', error);
     }
     setLoading(false);
     router.push('/(auth)');
@@ -84,16 +102,35 @@ const AddCampaign = () => {
           onChangeText={setDescription}
           style={styles.inputField}
         />
-         <TextInput
-          keyboardType="numeric"
-          maxLength={1}
-          placeholder="Enter 1 or 0"
+        <TextInput
+          placeholder="Enter TRUE or FALSE"
           placeholderTextColor="black"
           value={is_active}
           onChangeText={setIsActive}
           style={styles.inputField}
         />
-        <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
+        <Dropdown
+          style={styles.inputField}
+          placeholderStyle={styles.inputField}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={data}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder="Select type"
+          searchPlaceholder="Search..."
+          value={type}
+          onChange={(item) => {
+            setType(item.value);
+          }}
+          renderLeftIcon={() => (
+            <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+          )}
+        />
+        <TouchableOpacity onPress={addCampaign} style={styles.button}>
           <Text style={{ color: '#fff' }}>Submit</Text>
         </TouchableOpacity>
         <TouchableOpacity>
@@ -137,6 +174,29 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     padding: 12,
     borderRadius: 4,
+  },
+  dropdown: {
+    margin: 16,
+    height: 50,
+    borderBottomColor: 'gray',
+    borderBottomWidth: 0.5,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
   },
 });
 

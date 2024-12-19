@@ -4,20 +4,22 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { DataTable, FAB } from 'react-native-paper';
 
+import { CENTER_TABlE } from '~/powersync/AppSchema';
 import { useSystem } from '~/powersync/PowerSync';
 
 const CenterList = () => {
   const [center, setCenter] = useState([{}]);
-  const { supabaseConnector } = useSystem();
+  const { db } = useSystem();
 
   useEffect(() => {
     showCenters();
   });
 
   const showCenters = async () => {
-    const { data } = await supabaseConnector.getCenters();
-    setCenter(data);
+    const result = await db.selectFrom(CENTER_TABlE).selectAll().execute();
+    setCenter(result);
   };
+
   return (
     <View>
       <FAB icon="plus" style={styles.fab} onPress={() => router.push('/addCenter')} />
