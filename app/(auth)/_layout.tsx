@@ -2,26 +2,18 @@ import { Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
 import { Tabs, router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { useSystem } from '~/powersync/PowerSync';
-
-type RootDrawerParamList = {
-  Home: undefined;
-  Settings: undefined;
-};
-const Drawer = createDrawerNavigator<RootDrawerParamList>();
-
 const Layout = () => {
   const { supabaseConnector, powersync } = useSystem();
 
   const onSignOut = async () => {
     await powersync.disconnectAndClear();
     await supabaseConnector.client.auth.signOut();
+    router.replace('/');
   };
 
   return (
@@ -39,7 +31,7 @@ const Layout = () => {
               </TouchableOpacity>
             ),
             headerRight: () => (
-              <TouchableOpacity onPress={HamburgerMenu}>
+              <TouchableOpacity onPress={onSignOut}>
                 <Ionicons name="menu-outline" size={24} color="white" />
               </TouchableOpacity>
             ),
@@ -93,15 +85,5 @@ const Layout = () => {
       </Tabs>
     </GestureHandlerRootView>
   );
-
-  function HamburgerMenu() {
-    return (
-      <NavigationContainer independent>
-        <Drawer.Navigator>
-          <Drawer.Screen name="Home" component={HomeScreen} />
-        </Drawer.Navigator>
-      </NavigationContainer>
-    );
-  }
 };
 export default Layout;

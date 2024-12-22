@@ -81,7 +81,7 @@ PODS:
     - ExpoModulesCore
   - ExpoFileSystem (16.0.9):
     - ExpoModulesCore
-  - ExpoHead (3.5.24):
+  - ExpoHead (3.4.10):
     - ExpoModulesCore
   - ExpoKeepAwake (12.8.2):
     - ExpoModulesCore
@@ -96,7 +96,7 @@ PODS:
     - ExpoModulesCore
   - ExpoWebBrowser (12.8.2):
     - ExpoModulesCore
-  - EXSplashScreen (0.27.7):
+  - EXSplashScreen (0.26.5):
     - ExpoModulesCore
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -988,7 +988,7 @@ PODS:
   - React-Mapbuffer (0.73.6):
     - glog
     - React-debug
-  - react-native-get-random-values (1.9.0):
+  - react-native-get-random-values (1.8.0):
     - React-Core
   - react-native-quick-sqlite (1.4.0):
     - glog
@@ -1432,12 +1432,12 @@ SPEC CHECKSUMS:
   expo-dev-menu-interface: 7ba029c9d1a82ac22b9b584c00514860b060553e
   ExpoCrypto: b6428f48599c007676dc81a9b5f72c07e62fdccc
   ExpoFileSystem: 74cc0fae916f9f044248433971dcfc8c3befd057
-  ExpoHead: a79e263b73039b41940c220dd67b83572e7cac09
+  ExpoHead: 89ffd324e60520751c2c285233fe45e875c91874
   ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c
   ExpoModulesCore: 421e9c6bcb63baf153a5ec22b2b4319addfe331c
   ExpoSystemUI: 735278045c1a28de0018a300bb5abb3f9090652b
   ExpoWebBrowser: e31c97230ea93b51a2a74c6c2381b0d4fca5698c
-  EXSplashScreen: 808d4bbf29d5534f1d261847aab5338a6ec85e61
+  EXSplashScreen: fb4d80520d2348d57879e7a272415438bbcdffd3
   EXUpdatesInterface: 3e444e2093e25b7ca0999a7d8c16e8392dee70c3
   FBLazyVector: f64d1e2ea739b4d8f7e4740cde18089cd97fe864
   FBReactNativeSpec: 9f2b8b243131565335437dba74923a8d3015e780
@@ -1467,7 +1467,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 85583ef014ce53d731a98c66a0e24496f7a83066
   React-logger: 3eb80a977f0d9669468ef641a5e1fabbc50a09ec
   React-Mapbuffer: 84ea43c6c6232049135b1550b8c60b2faac19fab
-  react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
+  react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-quick-sqlite: e94925742328648ac4e751935108dc59409e9c25
   react-native-safe-area-context: 4532f1a0c5d34a46b9324ccaaedcb5582a302b7d
   React-nativeconfig: b4d4e9901d4cabb57be63053fd2aa6086eb3c85f

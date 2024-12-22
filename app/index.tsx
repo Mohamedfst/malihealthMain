@@ -1,5 +1,5 @@
-import { Link } from 'expo-router';
-import React, { useState } from 'react';
+import { Link, useRouter } from 'expo-router';
+import React, { useState, useEffect } from 'react';
 import {
   Alert,
   View,
@@ -16,14 +16,30 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  let role: string;
   const { supabaseConnector } = useSystem();
-
+  const router = useRouter();
+  const getUserName = async () => {
+    const { data, error } = await supabaseConnector.client.auth.getSession();
+    if (error) {
+      throw error;
+    }
+    if (Object.keys(data.session.user.user_metadata.first_name).length > 0) {
+      role = data.session.user.user_metadata.role;
+    }
+  };
   // Sign in with email and password
   const onSignInPress = async () => {
     setLoading(true);
     try {
       // Use the PowerSync specific login method
       await supabaseConnector.login(email, password);
+      await getUserName();
+      if (role === 'Provider' || role === 'Community worker') {
+        router.replace('/(provider)');
+      } else {
+        router.replace('/(auth)');
+      }
     } catch (error: any) {
       Alert.alert(error.message);
     } finally {

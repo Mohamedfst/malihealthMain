@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -26,12 +26,10 @@ const index_ = () => {
   const [natLicense, setNatLicense] = useState('');
   const [languages, setLanguages] = useState('');
   const [team, setTeam] = useState('');
-  const [center, setCenter] = useState('');
-  const [organization, setOrganization] = useState('');
-
   const [loading, setLoading] = useState(false);
   const { supabaseConnector } = useSystem();
   const role = 'Admin';
+  const router = useRouter();
   //Create a new user
   const onSignUpPress = async () => {
     setLoading(true);
@@ -53,8 +51,6 @@ const index_ = () => {
           nat_license: natLicense,
           languages,
           team,
-          center,
-          organization,
           role,
         },
       },
@@ -67,6 +63,7 @@ const index_ = () => {
     }
 
     setLoading(false);
+    router.replace('/(auth)');
   };
 
   return (
@@ -188,22 +185,6 @@ const index_ = () => {
           placeholderTextColor="black"
           value={team}
           onChangeText={setTeam}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Center, e.g., CSCOM, CSREF, Regional, National, and Private"
-          placeholderTextColor="black"
-          value={center}
-          onChangeText={setCenter}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Organization, e.g., NGO, and ASCO"
-          placeholderTextColor="black"
-          value={organization}
-          onChangeText={setOrganization}
           style={styles.inputField}
         />
 

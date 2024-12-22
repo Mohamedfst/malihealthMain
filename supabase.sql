@@ -71,3 +71,37 @@ $$ language plpgsql security definer;
 create trigger on_public_provider_created
   after insert on public.providers
   for each row execute procedure public.handle_new_provider();
+
+
+
+
+
+
+
+
+
+
+
+
+
+  begin
+  insert into public.users (id, email, first_name, last_name, 
+  dob, personal_num, emergency_num, address, med_license, nat_license, languages, team, center_id, organization_id, role, photo)
+  values (new.id, new.email, 
+  new.raw_user_meta_data->>'first_name', 
+  new.raw_user_meta_data->>'last_name', 
+  new.raw_user_meta_data->>'dob', 
+  new.raw_user_meta_data->>'personal_num', 
+  new.raw_user_meta_data->>'emergency_num', 
+  new.raw_user_meta_data->>'address', 
+  new.raw_user_meta_data->>'med_license', 
+  new.raw_user_meta_data->>'nat_license', 
+  new.raw_user_meta_data->>'languages', 
+  new.raw_user_meta_data->>'team', 
+  new.raw_user_meta_data->>'center_id', 
+  new.raw_user_meta_data->>'organization_id', 
+  new.raw_user_meta_data->>'role', 
+  new.raw_user_meta_data->>'photo'
+  );
+  return new;
+end;

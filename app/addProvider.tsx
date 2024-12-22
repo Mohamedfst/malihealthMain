@@ -26,12 +26,11 @@ const AddProvider = () => {
   const [medical_license, setMedicalLicense] = useState('');
   const [languages, setLanguages] = useState('');
   const [team, setHealthTeam] = useState('');
-  const [center, setHealthCenter] = useState('');
   const [loading, setLoading] = useState(false);
   const { supabaseConnector } = useSystem();
 
   const router = useRouter();
-  const organization_id = process.env.EXPO_PUBLIC_Organization;
+  //const organization_id = process.env.EXPO_PUBLIC_Organization;
   const role: string = 'Provider';
   //Create a new organization
   const onSignUpPress = async () => {
@@ -55,20 +54,19 @@ const AddProvider = () => {
           nat_license,
           languages,
           team,
-          center,
           role,
-          organization_id,
         },
       },
     });
 
     if (error) {
+      console.log(error);
       Alert.alert(error.message);
     } else if (!session) {
       Alert.alert('Please check your inbox for email verification!');
     }
     setLoading(false);
-    router.push('/(provider)');
+    router.replace('/(provider)');
   };
 
   return (
@@ -190,14 +188,6 @@ const AddProvider = () => {
           placeholderTextColor="black"
           value={team}
           onChangeText={setHealthTeam}
-          style={styles.inputField}
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Health Center"
-          placeholderTextColor="black"
-          value={center}
-          onChangeText={setHealthCenter}
           style={styles.inputField}
         />
         <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
