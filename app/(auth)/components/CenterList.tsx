@@ -12,13 +12,27 @@ const CenterList = () => {
   const { db } = useSystem();
 
   useEffect(() => {
-    showCenters();
-  });
+    let isMounted = true;
 
-  const showCenters = async () => {
-    const result = await db.selectFrom(CENTER_TABlE).selectAll().execute();
-    setCenter(result);
-  };
+    const showCenters = async () => {
+      try {
+        const result = await db.selectFrom(CENTER_TABlE).selectAll().execute();
+        if (isMounted) {
+          setCenter(result);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching centers:', error);
+        }
+      }
+    };
+
+    showCenters();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <View>

@@ -12,18 +12,44 @@ const ShowPatients = () => {
   const { supabaseConnector, db } = useSystem();
 
   useEffect(() => {
+    let isMounted = true;
+
+    const currentUser = async () => {
+      try {
+        const { session } = await supabaseConnector.fetchCredentials();
+        if (isMounted && session && session.user && session.user.user_metadata) {
+          setUser(session.user.user_metadata);
+        } else if (isMounted) {
+          console.warn('Unexpected session data format:', session);
+          setUser({});
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching user:', error);
+        }
+      }
+    };
+
+    const showPatients = async () => {
+      try {
+        const result = await db.selectFrom(PATIENT_TABLE).selectAll().execute();
+        if (isMounted) {
+          setPatients(result);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching patients:', error);
+        }
+      }
+    };
+
     showPatients();
     currentUser();
-  });
 
-  const currentUser = async () => {
-    const { session } = await supabaseConnector.fetchCredentials();
-    setUser(session.user.user_metadata);
-  };
-  const showPatients = async () => {
-    const result = await db.selectFrom(PATIENT_TABLE).selectAll().execute();
-    setPatients(result);
-  };
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <View>
@@ -50,7 +76,7 @@ const ShowPatients = () => {
               <DataTable.Cell
                 onPress={() => {
                   router.push({
-                    pathname: '/detailsOrganization',
+                    pathname: '/detailsPatient',
                     params: item,
                   });
                 }}>
@@ -60,7 +86,7 @@ const ShowPatients = () => {
               <DataTable.Cell
                 onPress={() => {
                   router.push({
-                    pathname: '/detailsOrganization',
+                    pathname: '/detailsPatient',
                     params: item,
                   });
                 }}>
@@ -69,17 +95,17 @@ const ShowPatients = () => {
               <DataTable.Cell
                 onPress={() => {
                   router.push({
-                    pathname: '/detailsOrganization',
+                    pathname: '/detailsPatient',
                     params: item,
                   });
                 }}>
                 {'     '}
-                {item.type}
+                {item.languages}
               </DataTable.Cell>
               <DataTable.Cell
                 onPress={() => {
                   router.push({
-                    pathname: '/detailsOrganization',
+                    pathname: '/detailsPatient',
                     params: item,
                   });
                 }}>

@@ -1,6 +1,6 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Link, useRouter } from 'expo-router';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   TextInput,
@@ -32,8 +32,6 @@ const AddOrganization = () => {
   const { db } = useSystem();
 
   const router = useRouter();
-
-  useEffect(() => {});
 
   const addOrganization = async () => {
     const todoId = uuid();

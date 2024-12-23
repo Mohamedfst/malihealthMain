@@ -25,30 +25,43 @@ const AddPatient = () => {
   const [address, setAddress] = useState('');
   const [emergency_num, setEmerNum] = useState('');
   const [languages, setLanguages] = useState('');
-  const [type, setType] = useState('');
   const [center, setCenter] = useState([{}]);
   const [data, setData] = useState([{}]);
   const [loading, setLoading] = useState(false);
+  const [org, setOrg] = useState('');
   const { db } = useSystem();
 
   const router = useRouter();
   useEffect(() => {
-    showCentersMembership();
-  });
-  const showCentersMembership = async () => {
-    const DropDownMenu = [];
-    const result = await db.selectFrom(CENTER_TABlE).selectAll().execute();
-    setCenter(result);
-    if (center.length > 0) {
-      for (let i = 0; i < center.length; i++) {
-        const currentObject = { label: `${center[i].name}`, value: `${center[i].id}` };
-        DropDownMenu.push(currentObject);
+    let isMounted = true;
+
+    const showCentersMembership = async () => {
+      try {
+        const result = await db.selectFrom(CENTER_TABlE).selectAll().execute();
+
+        if (isMounted) {
+          setCenter(result);
+
+          // Process the result *immediately* after fetching, before setting state
+          const DropDownMenu =
+            result.length > 0 ? result.map((item) => ({ label: item.name, value: item.id })) : []; // Handle empty result case
+
+          setData(DropDownMenu);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching centers:', error);
+        }
       }
-      setData(DropDownMenu);
-    }
-  };
-  const addOrganization = async () => {
-    // console.log('Inside the addTodo');
+    };
+
+    showCentersMembership();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+  const addPatient = async () => {
     const todoId = uuid();
     try {
       await db
@@ -64,7 +77,7 @@ const AddPatient = () => {
           address,
           emergency_num,
           languages,
-          center_id: type,
+          center_id: org,
         })
         .execute();
     } catch (error) {
@@ -183,15 +196,15 @@ const AddPatient = () => {
           valueField="value"
           placeholder="Select type"
           searchPlaceholder="Search..."
-          value={type}
+          value={org}
           onChange={(item) => {
-            setType(item.value);
+            setOrg(item.value);
           }}
           renderLeftIcon={() => (
             <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
           )}
         />
-        <TouchableOpacity onPress={addOrganization} style={styles.button}>
+        <TouchableOpacity onPress={addPatient} style={styles.button}>
           <Text style={{ color: '#fff' }}>Submit</Text>
         </TouchableOpacity>
         <TouchableOpacity>

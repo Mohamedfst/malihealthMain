@@ -40,20 +40,39 @@ const AddCenter = () => {
   const router = useRouter();
 
   useEffect(() => {
-    showOrganizations();
-  });
-  const showOrganizations = async () => {
-    const DropDownMenu = [];
-    const result = await db.selectFrom(ORGANIZATION_TABlE).selectAll().execute();
-    setOrganization(result);
-    if (organization.length > 0) {
-      for (let i = 0; i < organization.length; i++) {
-        const currentObject = { label: `${organization[i].name}`, value: `${organization[i].id}` };
-        DropDownMenu.push(currentObject);
+    let isMounted = true;
+
+    const showOrganizations = async () => {
+      try {
+        const result = await db.selectFrom(ORGANIZATION_TABlE).selectAll().execute();
+
+        if (isMounted) {
+          setOrganization(result);
+
+          // Create dropdown menu *after* setting the state
+          if (result.length > 0) {
+            const DropDownMenu = result.map((org) => ({
+              label: org.name,
+              value: org.id,
+            }));
+            setData(DropDownMenu);
+          } else {
+            setData([]); // Ensure data is empty if no results
+          }
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching organizations:', error);
+        }
       }
-      setData(DropDownMenu);
-    }
-  };
+    };
+
+    showOrganizations();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
   const addCenter = async () => {
     const todoId = uuid();
     try {

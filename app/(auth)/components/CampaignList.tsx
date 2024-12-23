@@ -12,19 +12,44 @@ const CampaignList = () => {
   const { supabaseConnector, db } = useSystem();
 
   useEffect(() => {
+    let isMounted = true;
+
+    const currentUser = async () => {
+      try {
+        const { session } = await supabaseConnector.fetchCredentials();
+        if (isMounted && session && session.user && session.user.user_metadata) {
+          setUser(session.user.user_metadata);
+        } else if (isMounted) {
+          console.warn('Unexpected session data format:', session);
+          setUser({});
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching user:', error);
+        }
+      }
+    };
+
+    const showPatients = async () => {
+      try {
+        const result = await db.selectFrom(CAMPAIGN_TABLE).selectAll().execute();
+        if (isMounted) {
+          setCampaign(result);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching campaigns:', error);
+        }
+      }
+    };
+
     showPatients();
     currentUser();
-  });
 
-  const currentUser = async () => {
-    const { session } = await supabaseConnector.fetchCredentials();
-    setUser(session.user.user_metadata);
-  };
-
-  const showPatients = async () => {
-    const result = await db.selectFrom(CAMPAIGN_TABLE).selectAll().execute();
-    setCampaign(result);
-  };
+    return () => {
+      isMounted = false;
+    };
+  }, []);
   return (
     <View>
       <FAB

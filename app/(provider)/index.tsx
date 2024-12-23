@@ -10,24 +10,53 @@ const Dashboard = () => {
   const { supabaseConnector } = useSystem();
 
   useEffect(() => {
+    let isMounted = true; // Flag to track component mount status
+
+    const getUserName = async () => {
+      try {
+        const { data, error } = await supabaseConnector.client.auth.getSession();
+        if (error) {
+          // It's generally better to log the error rather than throwing it inside a useEffect
+          console.error('Error fetching session:', error);
+          return; // Important: Exit the function if there's an error
+        }
+
+        if (isMounted) {
+          // Check if the component is still mounted
+          if (
+            data &&
+            data.session &&
+            data.session.user &&
+            data.session.user.user_metadata &&
+            data.session.user.user_metadata.first_name
+          ) {
+            if (Object.keys(data.session.user.user_metadata.first_name).length > 0) {
+              setRole(data.session.user.user_metadata.role);
+              setName(data.session.user.user_metadata.first_name);
+            } else {
+              setName('');
+              setRole('');
+            }
+          } else {
+            // Handle cases where data or nested properties are missing.
+            console.warn('Unexpected session data format:', data);
+            setName('');
+            setRole('');
+          }
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error in getUserName:', error);
+        }
+      }
+    };
+
     getUserName();
-  });
 
-  const getUserName = async () => {
-    const { data, error } = await supabaseConnector.client.auth.getSession();
-    if (error) {
-      throw error;
-    }
-
-    if (Object.keys(data.session.user.user_metadata.first_name).length > 0) {
-      // console.log('ROLE ->', data.session.user.user_metadata.role);
-      setRole(data.session.user.user_metadata.role);
-      setName(data.session.user.user_metadata.first_name);
-    } else {
-      setName('');
-      setRole('');
-    }
-  };
+    return () => {
+      isMounted = false; // Set the flag to false on unmount
+    };
+  }, []);
   return (
     <View>
       {role && role === 'Admin' && (

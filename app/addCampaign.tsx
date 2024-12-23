@@ -27,21 +27,39 @@ const AddCampaign = () => {
   const router = useRouter();
 
   useEffect(() => {
-    showCentersMembership();
-  });
+    let isMounted = true;
 
-  const showCentersMembership = async () => {
-    const DropDownMenu = [];
-    const result = await db.selectFrom(CENTER_TABlE).selectAll().execute();
-    setCenter(result);
-    if (center.length > 0) {
-      for (let i = 0; i < center.length; i++) {
-        const currentObject = { label: `${center[i].name}`, value: `${center[i].id}` };
-        DropDownMenu.push(currentObject);
+    const showCentersMembership = async () => {
+      try {
+        const result = await db.selectFrom(CENTER_TABlE).selectAll().execute();
+
+        if (isMounted) {
+          setCenter(result);
+
+          // Create the dropdown menu *after* setting the state, inside the same isMounted check
+          if (result.length > 0) {
+            const DropDownMenu = result.map((centerItem) => ({
+              label: centerItem.name,
+              value: centerItem.id,
+            }));
+            setData(DropDownMenu);
+          } else {
+            setData([]); // Important: Set data to empty array if no results
+          }
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching centers:', error);
+        }
       }
-      setData(DropDownMenu);
-    }
-  };
+    };
+
+    showCentersMembership();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
   const addCampaign = async () => {
     const todoId = uuid();
     try {

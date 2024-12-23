@@ -12,19 +12,45 @@ const OrganizationList = () => {
   const [user, setUser] = useState({});
   const { supabaseConnector, db } = useSystem();
   useEffect(() => {
+    let isMounted = true;
+
+    const showOrganizations = async () => {
+      try {
+        const result = await db.selectFrom(ORGANIZATION_TABlE).selectAll().execute();
+        if (isMounted) {
+          setOrganization(result);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching organizations:', error);
+        }
+      }
+    };
+
+    const currentUser = async () => {
+      try {
+        const { session } = await supabaseConnector.fetchCredentials();
+        if (isMounted && session && session.user && session.user.user_metadata) {
+          setUser(session.user.user_metadata);
+        } else if (isMounted) {
+          // Handle cases where session or nested properties are missing
+          console.warn('Unexpected session data format:', session);
+          setUser({}); // or set to a default value if appropriate
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching user:', error);
+        }
+      }
+    };
+
     showOrganizations();
     currentUser();
-  });
 
-  const showOrganizations = async () => {
-    const result = await db.selectFrom(ORGANIZATION_TABlE).selectAll().execute();
-    setOrganization(result);
-  };
-
-  const currentUser = async () => {
-    const { session } = await supabaseConnector.fetchCredentials();
-    setUser(session.user.user_metadata);
-  };
+    return () => {
+      isMounted = false;
+    };
+  }, []);
   return (
     <View>
       <FAB
