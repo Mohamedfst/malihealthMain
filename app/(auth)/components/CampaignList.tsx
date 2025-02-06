@@ -8,27 +8,10 @@ import { CAMPAIGN_TABLE } from '~/powersync/AppSchema';
 import { useSystem } from '~/powersync/PowerSync';
 const CampaignList = () => {
   const [campaign, setCampaign] = useState([{}]);
-  const [user, setUser] = useState({});
   const { supabaseConnector, db } = useSystem();
 
   useEffect(() => {
     let isMounted = true;
-
-    const currentUser = async () => {
-      try {
-        const { session } = await supabaseConnector.fetchCredentials();
-        if (isMounted && session && session.user && session.user.user_metadata) {
-          setUser(session.user.user_metadata);
-        } else if (isMounted) {
-          console.warn('Unexpected session data format:', session);
-          setUser({});
-        }
-      } catch (error) {
-        if (isMounted) {
-          console.error('Error fetching user:', error);
-        }
-      }
-    };
 
     const showPatients = async () => {
       try {
@@ -44,8 +27,6 @@ const CampaignList = () => {
     };
 
     showPatients();
-    currentUser();
-
     return () => {
       isMounted = false;
     };
@@ -58,7 +39,6 @@ const CampaignList = () => {
         onPress={() => {
           router.push({
             pathname: '/addCampaign',
-            params: user,
           });
         }}
       />
