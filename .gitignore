@@ -9,3 +9,4 @@ node_modules
 .expo
 ios
 node_modules
+package-lock.json
