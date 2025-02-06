@@ -5,11 +5,18 @@ export const ORGANIZATION_TABlE = 'organization';
 export const CENTER_TABlE = 'centers';
 export const PATIENT_TABLE = 'patients';
 export const CAMPAIGN_TABLE = 'campaigns';
+export const MEDICATION_TABLE = 'medications';
+
 
 const todos = new Table({
   task: column.text,
   user_id: column.text,
   is_complete: column.integer,
+});
+
+const medications = new Table({
+  name: column.text,
+  description: column.text,
 });
 
 const organization = new Table({
@@ -55,6 +62,7 @@ export const AppSchema = new Schema({
   centers,
   patients,
   campaigns,
+  medications,
 });
 
 export type Database = (typeof AppSchema)['types'];
@@ -63,3 +71,4 @@ export type Organization = Database['organization'];
 export type Center = Database['centers'];
 export type Patients = Database['patients'];
 export type Campaigns = Database['campaigns'];
+export type Medications = Database['medications'];
