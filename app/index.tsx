@@ -104,7 +104,7 @@ const Login = () => {
         <Text style={{ color: '#fff' }}>Sign in</Text>
       </TouchableOpacity>
       <TouchableOpacity>
-        <Link href="/index_">
+        <Link href="/addAdmin">
           <Text style={{ textAlign: 'center', color: 'white' }}> Create an Admin account </Text>
         </Link>
         <Text numberOfLines={1}>{'First line\nSecond line'}</Text>
