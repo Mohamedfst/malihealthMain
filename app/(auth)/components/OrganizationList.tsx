@@ -9,7 +9,6 @@ import { useSystem } from '~/powersync/PowerSync';
 
 const OrganizationList = () => {
   const [organization, setOrganization] = useState([{}]);
-  const [user, setUser] = useState({});
   const { supabaseConnector, db } = useSystem();
   useEffect(() => {
     let isMounted = true;
@@ -23,24 +22,8 @@ const OrganizationList = () => {
         }
     };
 
-    const currentUser = async () => {
-      try {
-        const { session } = await supabaseConnector.fetchCredentials();
-        if (session && session.user && session.user.user_metadata) {
-          setUser(session.user.user_metadata);
-        } else if (isMounted) {
-          // Handle cases where session or nested properties are missing
-          console.warn('Unexpected session data format:', session);
-          setUser({}); // or set to a default value if appropriate
-        }
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      }
-    };
-
     if (isMounted) {
       showOrganizations();
-      currentUser();
     }
     
     //After every re-render with changed dependencies, React will first run this cleanup function 
@@ -55,8 +38,7 @@ const OrganizationList = () => {
         style={styles.fab}
         onPress={() => {
           router.push({
-            pathname: '/addOrganization',
-            params: user,
+            pathname: '/addOrganization'
           });
         }}
       />
