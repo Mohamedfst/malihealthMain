@@ -16,25 +16,16 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  let role: string;
   const { supabaseConnector } = useSystem();
   const router = useRouter();
-  const getUserName = async () => {
-    const { data, error } = await supabaseConnector.client.auth.getSession();
-    if (error) {
-      throw error;
-    }
-    if (Object.keys(data.session.user.user_metadata.first_name).length > 0) {
-      role = data.session.user.user_metadata.role;
-    }
-  };
+
   // Sign in with email and password
   const onSignInPress = async () => {
     setLoading(true);
     try {
       // Use the PowerSync specific login method
       await supabaseConnector.login(email, password);
-      await getUserName();
+      const role = await fetchUserRole();
       if (role === 'Provider' || role === 'Community worker') {
         router.replace('/(provider)');
       } else {
@@ -45,6 +36,24 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchUserRole = async () => {
+    let role: string = 'N/A';
+    const { data, error } = await supabaseConnector.client.auth.getSession();
+    if (error) {
+      throw error;
+    }
+    if (
+      data &&
+      data.session &&
+      data.session.user &&
+      data.session.user.user_metadata &&
+      Object.keys(data.session.user.user_metadata.first_name).length > 0
+    ) {
+      role = data.session.user.user_metadata.role;
+    }
+    return role;
   };
 
   return (

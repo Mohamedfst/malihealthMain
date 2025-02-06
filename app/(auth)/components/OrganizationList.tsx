@@ -15,22 +15,18 @@ const OrganizationList = () => {
     let isMounted = true;
 
     const showOrganizations = async () => {
-      try {
-        const result = await db.selectFrom(ORGANIZATION_TABlE).selectAll().execute();
-        if (isMounted) {
+        try {
+          const result = await db.selectFrom(ORGANIZATION_TABlE).selectAll().execute();
           setOrganization(result);
+        } catch (error) {
+            console.error('Error fetching organizations:', error);
         }
-      } catch (error) {
-        if (isMounted) {
-          console.error('Error fetching organizations:', error);
-        }
-      }
     };
 
     const currentUser = async () => {
       try {
         const { session } = await supabaseConnector.fetchCredentials();
-        if (isMounted && session && session.user && session.user.user_metadata) {
+        if (session && session.user && session.user.user_metadata) {
           setUser(session.user.user_metadata);
         } else if (isMounted) {
           // Handle cases where session or nested properties are missing
@@ -38,15 +34,16 @@ const OrganizationList = () => {
           setUser({}); // or set to a default value if appropriate
         }
       } catch (error) {
-        if (isMounted) {
-          console.error('Error fetching user:', error);
-        }
+        console.error('Error fetching user:', error);
       }
     };
 
-    showOrganizations();
-    currentUser();
-
+    if (isMounted) {
+      showOrganizations();
+      currentUser();
+    }
+    
+    //After every re-render with changed dependencies, React will first run this cleanup function 
     return () => {
       isMounted = false;
     };
