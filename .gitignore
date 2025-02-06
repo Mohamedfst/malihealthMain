@@ -8,3 +8,4 @@ node_modules
 # @end expo-cli
 .expo
 ios
+node_modules
